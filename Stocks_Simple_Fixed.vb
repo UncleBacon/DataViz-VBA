@@ -21,14 +21,14 @@ Sub DoStuff() 'Excel VBA to extract the unique items.
         ws.Range("L1") = "Total Stock Volume"
         ws.Range("J1") = "Yearly Change"
         ws.Range("K1") = "Percent Change"
-        ws.Range("N2") = "Greatest Increase"
-        ws.Range("N3") = "Greatest Decrease"
+        ws.Range("N2") = "Greatest % Increase"
+        ws.Range("N3") = "Greatest % Decrease"
         ws.Range("N4") = "Greatest Volume"
         ws.Range("P1") = "Values"
         
         stockvol = 0 'total stock volume variable
         Count = 0 'helper column counter for count of each variable
-        sumry = 2 'counter for new data location
+        sumry = 2
         For i = 2 To Arow
             If ws.Range("A" & i + 1).Value <> ws.Range("A" & i).Value Then
                 stock = ws.Range("A" & i).Value
@@ -45,9 +45,9 @@ Sub DoStuff() 'Excel VBA to extract the unique items.
             End If
         Next i
         
-        ColLength = sumry - 1
+        Llength = sumry - 1
         run = 0
-        For i = 2 To ColLength
+        For i = 2 To Llength
             ' calculate first row of ticker
             start = 2 + run
             'calculate last row of ticker
@@ -84,13 +84,17 @@ Sub DoStuff() 'Excel VBA to extract the unique items.
         'get greatest decrease
         ws.Range("p3") = Application.WorksheetFunction.Min(ws.Range("k2", ws.Range("k" & Rows.Count).End(xlUp)))
         
-        For i = 2 To ColLength
-            ' put ticker symbols next to summary data
+        For i = 2 To Llength
+            ' find ticker fo largest volume
             If ws.Range("L" & i) = ws.Range("P4") Then
-                ws.Range("O4") = Range("I" & i)
-            ElseIf ws.Range("K" & i) = ws.Range("P3") Then
-                ws.Range("O3") = Range("I" & i)
-            ElseIf ws.Range("K" & i) = ws.Range("P2") Then
+                ws.Range("O4") = ws.Range("I" & i)
+            End If
+            'find ticker for largest % Decrease
+            If ws.Range("K" & i) = ws.Range("P3") Then
+                ws.Range("O3") = ws.Range("I" & i)
+            End If
+            'find ticker for largest % increase
+            If ws.Range("K" & i) = ws.Range("P2") Then
                 ws.Range("O2") = ws.Range("I" & i)
             End If
         Next i
@@ -98,7 +102,7 @@ Sub DoStuff() 'Excel VBA to extract the unique items.
         ' format columns/cells
         
         ws.Columns("J:P").NumberFormat = "#,#0.0#" 'set numbers to include comma if over 1,000 and at min show value as 0.0
-        ws.Range("P2:P3,K2:K" & ColLength).NumberFormat = "0.00%" ' set select cells/columns to percent
+        ws.Range("P2:P3,K2:K" & Llength).NumberFormat = "0.00%" ' set select cells/columns to percent
         ws.Columns("i:p").AutoFit ' autofit columns
         ws.Range("H:H").Value = "" 'remove values from helper column
     Next ws
